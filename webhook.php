@@ -1,4 +1,5 @@
 <?php
+#database credentials
 include ('conn.php');
 
 $select = $conn->prepare("SELECT webhook_id, webhook_token, token_refresh,expire FROM webhook_dados");
