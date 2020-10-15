@@ -1,9 +1,9 @@
 <?php
+#database credentials
 include ('conn.php');
 
 $select = $conn->prepare("SELECT webhook_id, webhook_token, token_refresh,expire,canal FROM webhook_dados");
 $select->execute(array());
-// iterating over a statement
 foreach($select as $row) {
     #echo $row['webhook_id'];
     #echo $row['webhook_token'];
