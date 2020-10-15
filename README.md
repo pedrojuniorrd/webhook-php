@@ -1,2 +1,1 @@
-# webhook-php
-webhook com php
+# webhook-discord-php
