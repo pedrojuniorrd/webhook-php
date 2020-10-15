@@ -11,8 +11,8 @@ $curl->setHeader('Content-Type','application/x-www-form-urlencoded');
     $response = $curl->post('https://discord.com/api/oauth2/token', 
         array(
             'grant_type' => 'authorization_code',
-            'client_id' => '[CLIENT_ID]',
-            'client_secret' => '[CLIENT_SECRET]',
+            'client_id' => '[CLIENT ID]',
+            'client_secret' => '[CLIENT SECRET]]',
             'redirect_uri' => 'http://localhost:80/login.php',
             'code' => $_GET["code"],
             'scope' => 'identify guilds'
@@ -36,7 +36,15 @@ $dados = array('token_acesso' => $resposta['access_token'],
 $names_str = implode(" , ",$dados);
 $parts = explode (" , ",$names_str);
 
-$sql = "INSERT INTO webhook_dados(token_acesso,expire,token_refresh,webhook_id,webhook_name,webhook_token,url_endpoint,canal)VALUES (
-            '$parts[0]', '$parts[1]','$parts[2]','$parts[3]','$parts[4]','$parts[5]','$parts[6]','$parts[7]')";
+$stmt = $conn->prepare("SELECT canal FROM webhook_dados WHERE canal='$parts[7]'");
+$stmt->execute(['$parts[7]']); 
+$canal = $stmt->fetch();
 
+if ($canal) {
+    $conn=null;
+} else {
+$sql = "INSERT INTO webhook_dados(token_acesso,expire,token_refresh,webhook_id,webhook_name,webhook_token,url_endpoint,canal)VALUES (
+        '$parts[0]', '$parts[1]','$parts[2]','$parts[3]','$parts[4]','$parts[5]','$parts[6]','$parts[7]')";
 $conn->query($sql);
+} 
+
