@@ -11,8 +11,8 @@ $curl->setHeader('Content-Type','application/x-www-form-urlencoded');
     $response = $curl->post('https://discord.com/api/oauth2/token', 
         array(
             'grant_type' => 'authorization_code',
-            'client_id' => '765007642556366878',
-            'client_secret' => '0CwY7kiRYNLZOS3KSaYQ_IN6kpRFQbB9',
+            'client_id' => '[client id]',
+            'client_secret' => '[client secret]',
             'redirect_uri' => 'http://localhost:80/login.php',
             'code' => $_GET["code"],
             'scope' => 'identify guilds'
