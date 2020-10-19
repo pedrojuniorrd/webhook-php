@@ -13,15 +13,12 @@ $response = $curl->post(
     'https://discord.com/api/oauth2/token',
     array(
             'grant_type' => 'authorization_code',
-<<<<<<< HEAD
             'client_id' => '[BOT CLIENT ID]',
             'client_secret' => '[BOT CLIENT SECRET]',
             'redirect_uri' => 'http://localhost:8080/login.php',
-=======
             'client_id' => '[client id]',
             'client_secret' => '[client secret]',
             'redirect_uri' => 'http://localhost:80/login.php',
->>>>>>> 35ed3337d051e495eac78921d9780df51d90d76d
             'code' => $_GET["code"],
         )
 );
