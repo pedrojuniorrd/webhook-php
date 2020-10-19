@@ -1,53 +1,51 @@
 <?php
 
-require ('conn.php');
+require('conn.php');
 require __DIR__ . '/vendor/autoload.php';
 
 use \Curl\Curl;
+
 $conf = new \stdClass();
 $curl = new Curl();
-$curl->setHeader('Content-Type','application/x-www-form-urlencoded');
+$curl->setHeader('Content-Type', 'application/x-www-form-urlencoded');
 
-    $response = $curl->post('https://discord.com/api/oauth2/token', 
-        array(
+$response = $curl->post(
+    'https://discord.com/api/oauth2/token',
+    array(
             'grant_type' => 'authorization_code',
-            'client_id' => '765007642556366878',
-            'client_secret' => '0CwY7kiRYNLZOS3KSaYQ_IN6kpRFQbB9',
-            'redirect_uri' => 'http://localhost:80/login.php',
+            'client_id' => '[BOT CLIENT ID]',
+            'client_secret' => '[BOT CLIENT SECRET]',
+            'redirect_uri' => 'http://localhost:8080/login.php',
             'code' => $_GET["code"],
-            'scope' => 'identify guilds'
         )
-    );
-
-
-$resposta = json_decode(json_encode($curl->response),TRUE);
+);
 echo "<pre>";
-print_r($resposta);
-$dados = array('token_acesso' => $resposta['access_token'],
-                'expira_em' => $resposta['expires_in'],
-                'token_refresh' => $resposta['refresh_token'],
-                'webhook_id' => $resposta['webhook']['id'],
-                'webhook_name' => $resposta['webhook']['name'],
-                'webhook_token' => $resposta['webhook']['token'],
-                'webhook_endpoint_url' => $resposta['webhook']['url'],
-                'canal_id' => $resposta['webhook']['channel_id']);
+print_r($response);
 
+$t_access = json_decode(json_encode($curl->response->access_token), true);
+$expire_t = json_decode(json_encode($curl->response->expires_in), true);
+$t_refresh = json_decode(json_encode($curl->response->refresh_token), true);
+$wh_id = json_decode(json_encode($curl->response->webhook->id), true);
+$wh_ch_id = json_decode(json_encode($curl->response->webhook->channel_id), true);
+$wh_name = json_decode(json_encode($curl->response->webhook->name), true);
+$wh_token = json_decode(json_encode($curl->response->webhook->token), true);
+$ep_url = json_decode(json_encode($curl->response->webhook->url), true);
+$t_type = json_decode(json_encode($curl->response->token_type), true);
+$wh_servidor = json_decode(json_encode($curl->response->webhook->guild_id), true);
+$time = time() + $expire_t;
 
-$names_str = implode(" , ",$dados);
-$parts = explode (" , ",$names_str);
-
-$stmt = $conn->prepare("SELECT canal FROM webhook_dados WHERE canal='$parts[7]'");
-$stmt->execute(['$parts[7]']); 
+$stmt = $conn->prepare("SELECT canal FROM webhook_dados WHERE canal='$wh_ch_id'");
+$stmt->execute(['$wh_ch_id']);
 $canal = $stmt->fetch();
 if ($canal) {
+    $curl1 = new Curl();
+    $response = $curl1->delete('https://discord.com/api/webhooks/'.$wh_id.'/'.$wh_token);
+    print_r($response);
     $canal=null;
     $conn=null;
-    
-    
 } else {
-print_r($canal);
-$sql = "INSERT INTO webhook_dados(token_acesso,expire,token_refresh,webhook_id,webhook_name,webhook_token,url_endpoint,canal)VALUES (
-        '$parts[0]', '$parts[1]','$parts[2]','$parts[3]','$parts[4]','$parts[5]','$parts[6]','$parts[7]')";
-$conn->query($sql);
-} 
+    $sql = "INSERT INTO webhook_dados(webhook_id,webhook_name,webhook_token,url_endpoint,canal,servidor,token_acesso,expires_in,token_refresh,token_type)VALUES ('$wh_id','$wh_name','$wh_token','$ep_url','$wh_ch_id','$wh_servidor','$t_access', '$time','$t_refresh','$t_type')";
+    $conn->query($sql);
+}
 
+// header("Location: https://www.wowhelp.com.br/");
