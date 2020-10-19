@@ -16,9 +16,6 @@ $response = $curl->post(
             'client_id' => '[BOT CLIENT ID]',
             'client_secret' => '[BOT CLIENT SECRET]',
             'redirect_uri' => 'http://localhost:8080/login.php',
-            'client_id' => '[client id]',
-            'client_secret' => '[client secret]',
-            'redirect_uri' => 'http://localhost:80/login.php',
             'code' => $_GET["code"],
         )
 );
